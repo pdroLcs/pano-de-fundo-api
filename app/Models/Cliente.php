@@ -17,8 +17,8 @@ class Cliente extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function compras(): HasMany
-    // {
-    //     return $this->hasMany(Compra::class); 
-    // }
+    public function compras(): HasMany
+    {
+        return $this->hasMany(Compra::class); 
+    }
 }
