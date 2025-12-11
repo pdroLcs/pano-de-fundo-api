@@ -7,18 +7,22 @@ use App\Http\Requests\Api\ClienteRequest;
 use App\Http\Resources\Api\ClienteResource;
 use App\Models\Cliente;
 use App\Models\User;
+use App\Traits\HttpResponses;
 use DB;
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return ClienteResource::collection(Cliente::with('user')->get());
     }
 
     /**
@@ -26,30 +30,30 @@ class ClienteController extends Controller
      */
     public function store(ClienteRequest $request)
     {
+        $data = $request->validated();
+
         DB::beginTransaction();
 
         try {
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password'])
             ]);
 
             $cliente = Cliente::create([
-                'telefone' => $request->telefone,
+                'telefone' => $data['telefone'],
                 'user_id' => $user->id
             ]);
 
 
             DB::commit();
 
-            return (new ClienteResource($cliente))->response()->setStatusCode(201);
-        } catch (Exception $e) {
+            // return (new ClienteResource($cliente))->response()->setStatusCode(201);
+            return $this->response('Cliente cadastrado com sucesso', 201, new ClienteResource($cliente->load('user')));
+        } catch (QueryException $e) {
             DB::rollBack();
-            return response()->json([
-                'error' => 'Erro ao cadastrar cliente',
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->error('Erro ao cadastrar cliente', 501);
         }
     }
 

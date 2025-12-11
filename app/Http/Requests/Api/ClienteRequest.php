@@ -25,17 +25,9 @@ class ClienteRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'telefone' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:users,email,' . $this->cliente,
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6'
         ];
     }
-
-    protected function prepareForValidation()
-    {
-        if ($this->filled('password')) {
-            $this->merge([
-                'password' => Hash::make($this->password)
-            ]);
-        }
-    }
+    
 }

@@ -15,8 +15,6 @@ class ClienteResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'success' => true,
-            'message' => 'Cliente cadastrado com sucesso',
             'nome' => $this->user->name,
             'telefone' => $this->telefone,
             'email' => $this->user->email,

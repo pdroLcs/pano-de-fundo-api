@@ -9,5 +9,8 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function() {
+    Route::get('/clientes', [ClienteController::class, 'index']);
+
     Route::post('/clientes', [ClienteController::class, 'store']);
+    Route::post('/login', [ClienteController::class, 'login']);
 });
