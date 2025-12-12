@@ -17,21 +17,23 @@ Route::prefix('v1')->group(function() {
 
     Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
         Route::get('/clientes', [UserController::class, 'index']);
-
+        Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
+        Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
+        Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
     });
 
+    Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
+        Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
+        Route::resource('fale-conosco', FaleConoscoController::class)->only('store');
+    });
+
+    Route::resource('produtos', ProdutoController::class)->only('index', 'show');
+
     Route::post('/register', [UserController::class, 'store']);
-    Route::post('/login', [ClienteController::class, 'login']);
+    // Route::post('/login', [ClienteController::class, 'login']);
 
-    Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
 
-    Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
-    Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
 
-    Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
-
-    // Route::get('/fale-conosco/mensagens', [FaleConoscoController::class, 'index']);
-    // Route::get('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'show']);
     // Route::post('/fale-conosco', [FaleConoscoController::class, 'store']);
     // Route::put('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'update']);
     // Route::delete('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'destroy']);

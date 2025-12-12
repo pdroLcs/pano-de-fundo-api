@@ -10,6 +10,7 @@ use App\Traits\HttpResponses;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 // 6|gY6f2OuKe7gvw5QBxCBEI6qrq6B6ox8Ah7rPMR6xbc4e78a7 -> Cliente
@@ -22,12 +23,9 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->user()->tokenCan('admin')) {
-            return UserResource::collection(User::where('role', 'cliente')->get());
-        }
-        return $this->error('Não autorizado', 403);
+        return UserResource::collection(User::where('role', 'cliente')->get());
     }
 
     /**
@@ -62,15 +60,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $user = User::find($id);
+        if ($user) {
+            return new UserResource($user);
+        }
+        return $this->error('Cliente não encontrado ou não existe', 404);
     }
 
     /**

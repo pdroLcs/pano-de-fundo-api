@@ -7,6 +7,7 @@ use App\Http\Requests\Api\CategoriaRequest;
 use App\Http\Resources\Api\CategoriaResource;
 use App\Models\Categoria;
 use App\Traits\HttpResponses;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -28,9 +29,12 @@ class CategoriaController extends Controller
     public function store(CategoriaRequest $request)
     {
         try {
+            DB::beginTransaction();
             $categoria = Categoria::create($request->validated());
+            DB::commit();
             return $this->response('Categoria criada com sucesso', 201, new CategoriaResource($categoria));
         } catch (Exception $e) {
+            DB::rollBack();
             return $this->error('Erro ao cadastrar categoria', 501);
         }
     }
