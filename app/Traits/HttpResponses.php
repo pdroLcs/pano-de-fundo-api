@@ -2,11 +2,12 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 trait HttpResponses 
 {
-    public function response(string $message, string|int $status, array|JsonResource $data = [])
+    public function response(string $message, string|int $status, array|JsonResource|Model $data = [])
     {
         return response()->json([
             'message' => $message,

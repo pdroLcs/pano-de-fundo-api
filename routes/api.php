@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\CompraController;
+use App\Http\Controllers\Api\FaleConoscoController;
 use App\Http\Controllers\Api\ProdutoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,9 +21,15 @@ Route::prefix('v1')->group(function() {
     Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
 
     Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
+    Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
 
+    Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
 
-    Route::post('comprar/{produto}', [CompraController::class, 'comprar']);
+    // Route::get('/fale-conosco/mensagens', [FaleConoscoController::class, 'index']);
+    // Route::get('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'show']);
+    // Route::post('/fale-conosco', [FaleConoscoController::class, 'store']);
+    // Route::put('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'update']);
+    // Route::delete('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'destroy']);
 
     // Route::get('/produtos', [ProdutoController::class, 'index']);
     // Route::get('/produtos/{produto}', [ProdutoController::class, 'show']);
