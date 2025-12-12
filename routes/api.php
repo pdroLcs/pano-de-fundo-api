@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\CompraController;
 use App\Http\Controllers\Api\FaleConoscoController;
 use App\Http\Controllers\Api\ProdutoController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,9 +14,13 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function() {
-    Route::get('/clientes', [ClienteController::class, 'index']);
 
-    Route::post('/clientes', [ClienteController::class, 'store']);
+    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
+        Route::get('/clientes', [UserController::class, 'index']);
+
+    });
+
+    Route::post('/register', [UserController::class, 'store']);
     Route::post('/login', [ClienteController::class, 'login']);
 
     Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
