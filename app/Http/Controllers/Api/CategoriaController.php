@@ -29,7 +29,7 @@ class CategoriaController extends Controller
     {
         try {
             $categoria = Categoria::create($request->validated());
-            return $this->response('Categoria criada com sucesso', 200, new CategoriaResource($categoria));
+            return $this->response('Categoria criada com sucesso', 201, new CategoriaResource($categoria));
         } catch (Exception $e) {
             return $this->error('Erro ao cadastrar categoria', 501);
         }
@@ -40,30 +40,36 @@ class CategoriaController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $categoria = Categoria::find($id);
+        if (!$categoria) {
+            return $this->error('Categoria não encontrada', 404);
+        }
+        return new CategoriaResource($categoria);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoriaRequest $request, Categoria $categoria)
     {
-        //
+        $updated = $categoria->update($request->validated());
+
+        if ($updated) {
+            $categoria->refresh();
+            return $this->response('Categoria atualizada', 200, new CategoriaResource($categoria));
+        }
+        return $this->error('Erro ao atualizar categoria', 400);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Categoria $categoria)
     {
-        //
+        if ($categoria->delete()) {
+            return $this->response('Categoria excluída com sucesso', 200);
+        }
+        return $this->error('Erro ao deletar categoria', 400);
     }
 }

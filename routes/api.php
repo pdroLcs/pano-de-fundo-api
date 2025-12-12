@@ -16,5 +16,8 @@ Route::prefix('v1')->group(function() {
     Route::post('/login', [ClienteController::class, 'login']);
 
     Route::get('/categorias', [CategoriaController::class, 'index']);
+    Route::get('/categorias/{categoria}', [CategoriaController::class, 'show']);
     Route::post('/categorias', [CategoriaController::class, 'store']);
+    Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
+    Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy']);
 });
