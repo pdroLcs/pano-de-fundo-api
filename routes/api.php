@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ClienteController;
+use App\Http\Controllers\Api\ProdutoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,9 +16,18 @@ Route::prefix('v1')->group(function() {
     Route::post('/clientes', [ClienteController::class, 'store']);
     Route::post('/login', [ClienteController::class, 'login']);
 
-    Route::get('/categorias', [CategoriaController::class, 'index']);
-    Route::get('/categorias/{categoria}', [CategoriaController::class, 'show']);
-    Route::post('/categorias', [CategoriaController::class, 'store']);
-    Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
-    Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy']);
+    Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
+
+    Route::get('/produtos', [ProdutoController::class, 'index']);
+    Route::get('/produtos/{produto}', [ProdutoController::class, 'show']);
+    Route::post('/produtos', [ProdutoController::class, 'store']);
+    Route::put('/produtos/{produto}', [ProdutoController::class, 'update']);
+    Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy']);
+
+
+    // Route::get('/categorias', [CategoriaController::class, 'index']);
+    // Route::get('/categorias/{categoria}', [CategoriaController::class, 'show']);
+    // Route::post('/categorias', [CategoriaController::class, 'store']);
+    // Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
+    // Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy']);
 });
