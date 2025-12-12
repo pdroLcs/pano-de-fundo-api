@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ClienteController;
+use App\Http\Controllers\Api\CompraController;
 use App\Http\Controllers\Api\ProdutoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::prefix('v1')->group(function() {
     Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
 
     Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
+
+
+    Route::post('comprar/{produto}', [CompraController::class, 'comprar']);
 
     // Route::get('/produtos', [ProdutoController::class, 'index']);
     // Route::get('/produtos/{produto}', [ProdutoController::class, 'show']);
