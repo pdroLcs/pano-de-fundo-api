@@ -26,11 +26,10 @@ class AuthController extends Controller
                 'name' => $data['name'],
                 'email'=> $data['email'],
                 'telefone' => $data['telefone'] ?? null,
-                'password' => bcrypt($data['password']),
-                'role' => 'admin'
+                'password' => bcrypt($data['password'])
             ]);
 
-            $token = $user->createToken('auth-token', ['admin'])->plainTextToken;
+            $token = $user->createToken('auth-token', ['cliente'])->plainTextToken;
 
             DB::commit();
             return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
