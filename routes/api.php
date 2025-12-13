@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\CompraController;
@@ -29,7 +30,10 @@ Route::prefix('v1')->group(function() {
 
     Route::resource('produtos', ProdutoController::class)->only('index', 'show');
 
-    Route::post('/register', [UserController::class, 'store']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
     // Route::post('/login', [ClienteController::class, 'login']);
 
 

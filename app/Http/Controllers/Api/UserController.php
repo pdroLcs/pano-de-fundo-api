@@ -48,7 +48,7 @@ class UserController extends Controller
             $token = $user->createToken('auth-token', $abilities)->plainTextToken;
 
             DB::commit();
-            return $this->response('Cliente cadastrado com sucesso', 201, [new UserResource($user), 'token' => $token]);
+            return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
         } catch (Exception $e) {
             DB::rollBack();
             return $this->error('Erro ao cadastrar cliente', 500, [$e->getMessage()]);
