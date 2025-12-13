@@ -29,7 +29,7 @@ class AuthController extends Controller
                 'password' => bcrypt($data['password'])
             ]);
 
-            $token = $user->createToken('auth-token', ['cliente'])->plainTextToken;
+            $token = $user->createToken('auth_token', ['cliente'])->plainTextToken;
 
             DB::commit();
             return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
