@@ -20,23 +20,20 @@ class CompraController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        if ($request->user()->tokenCan('cliente')) {
+            return CompraResource::collection(Compra::where('user_id', $request->user()->id)->get());
+        } elseif ($request->user()->tokenCan('admin')) {
+            return CompraResource::collection(Compra::all());
+        }
+        return $this->error('Acesso negado', 403);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CompraRequest $request)
     {
         //
     }
@@ -80,7 +77,7 @@ class CompraController extends Controller
             $request->validated();
 
             $compra = Compra::create([
-                'cliente_id' => $request->cliente_id,
+                'user_id' => $request->user_id,
                 'valor_total' => $produto->preco,
                 'status' => 'pendente'
             ]);

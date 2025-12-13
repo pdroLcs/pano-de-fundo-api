@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Api;
 
-use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +16,7 @@ class CompraResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'cliente' => new ClienteResource($this->cliente),
+            'cliente' => new UserResource($this->user),
             'itens' => ItemCompraResource::collection($this->itens),
             'valor_total' => $this->valor_total,
             'status' => $this->status

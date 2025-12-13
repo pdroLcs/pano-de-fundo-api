@@ -22,7 +22,7 @@ class CompraRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cliente_id' => 'required|exists:clientes,id'
+            'user_id' => 'required|exists:users,id'
         ];
     }
 }

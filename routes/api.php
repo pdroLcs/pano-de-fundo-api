@@ -29,11 +29,15 @@ Route::prefix('v1')->group(function() {
         Route::resource('clientes', UserController::class)->only('update', 'destroy');
     });
 
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/compras', [CompraController::class, 'index']);
+    });
+
     Route::resource('produtos', ProdutoController::class)->only('index', 'show');
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
     // Route::post('/login', [ClienteController::class, 'login']);
 
