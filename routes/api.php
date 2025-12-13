@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ClienteController;
 use App\Http\Controllers\Api\CompraController;
 use App\Http\Controllers\Api\FaleConoscoController;
 use App\Http\Controllers\Api\ProdutoController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,20 +15,30 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function() {
-    Route::get('/clientes', [ClienteController::class, 'index']);
 
-    Route::post('/clientes', [ClienteController::class, 'store']);
-    Route::post('/login', [ClienteController::class, 'login']);
+    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
+        Route::resource('clientes', UserController::class)->only('index', 'show');
+        Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
+        Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
+        Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
+    });
 
-    Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
+    Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
+        Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
+        Route::resource('fale-conosco', FaleConoscoController::class)->only('store');
+        Route::resource('clientes', UserController::class)->only('update', 'destroy');
+    });
 
-    Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
-    Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
+    Route::resource('produtos', ProdutoController::class)->only('index', 'show');
 
-    Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-    // Route::get('/fale-conosco/mensagens', [FaleConoscoController::class, 'index']);
-    // Route::get('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'show']);
+    // Route::post('/login', [ClienteController::class, 'login']);
+
+
+
     // Route::post('/fale-conosco', [FaleConoscoController::class, 'store']);
     // Route::put('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'update']);
     // Route::delete('/fale-conosco/{mensagem}', [FaleConoscoController::class, 'destroy']);

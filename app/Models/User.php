@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telefone',
         'role'
     ];
 
@@ -48,13 +49,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function cliente()
-    {
-        return $this->hasOne(Cliente::class);
-    }
-
     public function isAdmin()
     {
         return $this->role === 'admin';
+    }
+
+    public function compras()
+    {
+        return $this->hasMany(Compra::class); 
     }
 }

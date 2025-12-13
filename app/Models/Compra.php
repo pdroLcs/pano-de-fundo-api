@@ -8,13 +8,13 @@ class Compra extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cliente_id', 'valor_total', 'status'];
+    protected $fillable = ['user_id', 'valor_total', 'status'];
 
     protected $casts = ['data_compra' => 'datetime'];
 
-    public function cliente()
+    public function user()
     {
-        return $this->belongsTo(Cliente::class); 
+        return $this->belongsTo(User::class); 
     }
 
     public function itens()
