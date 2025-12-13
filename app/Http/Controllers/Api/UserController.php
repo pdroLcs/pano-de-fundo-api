@@ -29,33 +29,6 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(UserRequest $request)
-    {
-        try {
-            DB::beginTransaction();
-            $data = $request->validated();
-
-            $user = User::create([
-                'name' => $data['name'],
-                'email'=> $data['email'],
-                'telefone' => $data['telefone'],
-                'password' => bcrypt($data['password'])
-            ]);
-
-            $abilities = $user->role === 'admin' ? ['admin'] : ['cliente'];
-            $token = $user->createToken('auth-token', $abilities)->plainTextToken;
-
-            DB::commit();
-            return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return $this->error('Erro ao cadastrar cliente', 500, [$e->getMessage()]);
-        }
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)
@@ -80,6 +53,14 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $user = User::find($id);
+            if ($user->delete()) {
+                return $this->response('Cliente excluído com sucesso', 200);
+            }
+            return $this->error('Erro ao excluir o cliente', 500);
+        } catch (Exception $e) {
+            return $this->error('Erro inesperado', 500, [$e->getMessage()]);
+        }
     }
 }
