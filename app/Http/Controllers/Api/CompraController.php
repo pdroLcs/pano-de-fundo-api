@@ -33,10 +33,7 @@ class CompraController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        $compra = Compra::find($id);
-        if (!$compra) {
-            return $this->error('Compra não encontrada ou não existe', 404);
-        }
+        $compra = Compra::findOrFail($id);
 
         $user = $request->user();
 
@@ -66,14 +63,15 @@ class CompraController extends Controller
         return $this->error('Erro ao excluir compra', 500);
     }
 
-    public function comprar(CompraRequest $request,  Produto $produto)
+    public function comprar(string $id)
     {
         try {
             DB::beginTransaction();
-            $request->validated();
+
+            $produto = Produto::findOrFail($id);
 
             $compra = Compra::create([
-                'user_id' => $request->user_id,
+                'user_id' => auth()->id(),
                 'valor_total' => $produto->preco,
                 'status' => 'pendente'
             ]);
