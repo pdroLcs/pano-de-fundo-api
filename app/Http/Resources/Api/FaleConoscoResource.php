@@ -16,7 +16,7 @@ class FaleConoscoResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'nome' => $this->cliente->user->name,
+            'user' => new UserResource($this->user),
             'assunto' => $this->assunto,
             'mensagem' => $this->mensagem
         ];

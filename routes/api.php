@@ -26,7 +26,7 @@ Route::prefix('v1')->group(function() {
 
     Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
         Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
-        Route::apiResource('fale-conosco', FaleConoscoController::class)->only('store');
+        Route::apiResource('fale-conosco', FaleConoscoController::class)->except('index');
         Route::apiResource('clientes', UserController::class)->only('update', 'destroy');
     });
 

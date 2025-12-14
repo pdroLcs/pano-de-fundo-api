@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FaleConoscoRequest extends FormRequest
+class FaleConoscoStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class FaleConoscoRequest extends FormRequest
     {
         return [
             'assunto' => 'nullable|string|max:255',
-            'mensagem' => 'required|string|max:1000',
-            'cliente_id' => 'required|exists:clientes,id'
+            'mensagem' => 'required|string|max:1000'
         ];
     }
 }
