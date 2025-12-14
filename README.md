@@ -1,59 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Pano de Fundo API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> API Laravel para gerenciar produtos, categorias, compras e mensagens (fale-conosco).
 
-## About Laravel
+## Visão geral
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Projeto backend em Laravel que expõe uma API RESTful (prefixo `/api/v1`) para gerenciar usuários (clientes), categorias, produtos, compras e mensagens de contato. Autenticação via Laravel Sanctum com capacidades/abilities para papéis (admin / cliente).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.x
+- Composer
+- MySQL / MariaDB (ou outro banco suportado pelo Laravel)
+- Node.js + npm (opcional, para assets)
+- Laragon (opcional para ambiente local)
 
-## Learning Laravel
+## Instalação
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+1. Clone o repositório:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   git clone <repo-url> pano-de-fundo-api
+   cd pano-de-fundo-api
 
-## Laravel Sponsors
+2. Instale dependências PHP:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   composer install
 
-### Premium Partners
+3. Copie e edite o arquivo de ambiente:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+   cp .env.example .env
 
-## Contributing
+   - Configure a conexão com o banco: `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. Gere a chave da aplicação:
 
-## Code of Conduct
+   php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. Rode migrações:
 
-## Security Vulnerabilities
+   php artisan migrate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6. Crie o link de storage:
 
-## License
+   php artisan storage:link
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+7. Inicie o servidor local (ou use Laragon):
+
+   php artisan serve --host=127.0.0.1 --port=8000
+
+O endpoint base da API será `http://127.0.0.1:8000/api/v1`.
+
+## Autenticação
+
+Esta API utiliza Laravel Sanctum para autenticação via tokens.
+
+Exemplo de registro e login:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"João","email":"joao@examplo.com","password":"secreta"}'
+
+curl -X POST http://127.0.0.1:8000/api/v1/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"joao@examplo.com","password":"secreta"}'
+```
+
+O registro e login retorna um token que deve ser usado no header `Authorization: Bearer <token>` para rotas protegidas.
+
+## Endpoints principais
+
+Base: `/api/v1`
+
+Públicos:
+- `POST /register` — registrar usuário
+- `POST /login` — autenticar e obter token
+- `GET /produtos` — listar produtos
+- `GET /produtos/{produto}` — ver detalhe do produto
+
+Autenticados (`auth:sanctum`):
+- `POST /logout` — encerrar sessão
+- `GET /compras` — listar compras (user)
+- `GET /compras/{id}` — detalhes da compra
+- `GET|DELETE|SHOW` em `clientes` conforme permissões
+- `POST|PUT|DELETE` em `fale-conosco` (CRUD de mensagens)
+
+Rotas para `admin` (middleware `abilities:admin`):
+- `GET /clientes` — listar clientes
+- CRUD completo para `/categorias` e `/produtos`
+- `DELETE /compras/{compra}` — remover compra
+
+Rotas para `cliente` (middleware `ability:cliente`):
+- `POST /comprar/{produto}` — finalizar compra do produto
+- `PUT /clientes/{id}` — atualizar próprio cliente
+
+Observação: Consulte `routes/api.php` para detalhes de rotas e permissões.
+
+## Estrutura do projeto (resumo)
+
+- `app/Models` — modelos Eloquent (User, Produto, Categoria, Compra, Mensagem, ItensCompra)
+- `app/Http/Controllers/Api` — controladores da API
+- `routes/api.php` — definição das rotas da API
+- `database/migrations` — migrações do banco
