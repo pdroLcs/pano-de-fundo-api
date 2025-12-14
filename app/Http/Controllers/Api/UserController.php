@@ -33,11 +33,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
-        if ($user) {
-            return new UserResource($user);
+        $user = User::findOrFail($id);
+        if (!auth()->user()->isAdmin() && auth()->id() !== $user->id) {
+            return $this->error('Acesso negado', 403);
         }
-        return $this->error('Cliente não encontrado ou não existe', 404);
+        return new UserResource($user);
     }
 
     /**
@@ -54,13 +54,16 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try {
-            $user = User::find($id);
+            $user = User::findOrFail($id);
+            if (!auth()->user()->isAdmin() && auth()->id() !== $user->id) {
+                return $this->response('Acesso negado', 403);
+            }
             if ($user->delete()) {
                 return $this->response('Cliente excluído com sucesso', 200);
             }
             return $this->error('Erro ao excluir o cliente', 500);
-        } catch (Exception $e) {
-            return $this->error('Erro inesperado', 500, [$e->getMessage()]);
+        } catch (\Throwable $e) {
+            return $this->error('Erro inesperado', 500, $e->getMessage());
         }
     }
 }
