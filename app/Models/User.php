@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Compra::class); 
     }
+
+    public function mensagens()
+    {
+        return $this->hasMany(Mensagem::class);
+    }
 }
