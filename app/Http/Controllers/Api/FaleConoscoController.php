@@ -10,9 +10,6 @@ use App\Models\Mensagem;
 use App\Traits\HttpResponses;
 use DB;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class FaleConoscoController extends Controller
 {
@@ -23,7 +20,10 @@ class FaleConoscoController extends Controller
      */
     public function index()
     {
-        return FaleConoscoResource::collection(Mensagem::with('user')->get());
+        if (auth()->user()->isAdmin()) {
+            return FaleConoscoResource::collection(Mensagem::with('user')->get());
+        }
+        return FaleConoscoResource::collection(Mensagem::where('user_id', auth()->id())->get());
     }
 
     /**
