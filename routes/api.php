@@ -17,25 +17,25 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function() {
 
     Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
-        Route::resource('clientes', UserController::class)->only('index', 'show');
-        Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
-        Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
-        Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
+        Route::apiResource('clientes', UserController::class);
+        Route::apiResource('categorias', CategoriaController::class);
+        Route::apiResource('produtos', ProdutoController::class);
+        Route::apiResource('fale-conosco', FaleConoscoController::class);
         Route::delete('/compras/{compra}', [CompraController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
         Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
-        Route::resource('fale-conosco', FaleConoscoController::class)->only('store');
-        Route::resource('clientes', UserController::class)->only('update', 'destroy');
+        Route::apiResource('fale-conosco', FaleConoscoController::class)->only('store');
+        Route::apiResource('clientes', UserController::class)->only('update', 'destroy');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::resource('compras', CompraController::class)->only('index', 'show');
+        Route::apiResource('compras', CompraController::class)->only('index', 'show');
     });
 
-    Route::resource('produtos', ProdutoController::class)->only('index', 'show');
+    Route::apiResource('produtos', ProdutoController::class)->only('index', 'show');
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
