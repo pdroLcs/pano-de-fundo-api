@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function() {
 
+    //clientes -> update, delete, show
+    //admin -> delete, show, index
+
     Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function() {
-        Route::apiResource('clientes', UserController::class);
+        Route::apiResource('clientes', UserController::class)->only('index');
         Route::apiResource('categorias', CategoriaController::class);
         Route::apiResource('produtos', ProdutoController::class);
         Route::apiResource('fale-conosco', FaleConoscoController::class);
@@ -27,12 +30,13 @@ Route::prefix('v1')->group(function() {
     Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
         Route::post('/comprar/{produto}', [CompraController::class, 'comprar']);
         Route::apiResource('fale-conosco', FaleConoscoController::class)->except('index');
-        Route::apiResource('clientes', UserController::class)->only('update', 'destroy');
+        Route::apiResource('clientes', UserController::class)->only('update');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::apiResource('compras', CompraController::class)->only('index', 'show');
+        Route::apiResource('clientes', UserController::class)->only('show', 'destroy');
     });
 
     Route::apiResource('produtos', ProdutoController::class)->only('index', 'show');
