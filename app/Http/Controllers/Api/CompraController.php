@@ -20,41 +20,31 @@ class CompraController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        if ($request->user()->tokenCan('cliente')) {
+            return CompraResource::collection(Compra::where('user_id', $request->user()->id)->get());
+        }
+        return CompraResource::collection(Compra::all());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
-    }
+        $compra = Compra::find($id);
+        if (!$compra) {
+            return $this->error('Compra não encontrada ou não existe', 404);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $user = $request->user();
+
+        if (!$user->isAdmin() && $compra->user_id !== $user->id) {
+            return $this->error('Você não tem permissão para acessar essa compra', 403);
+        }
+
+        return new CompraResource($compra);
     }
 
     /**
@@ -68,9 +58,12 @@ class CompraController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Compra $compra)
     {
-        //
+        if ($compra->delete()) {
+            return $this->response('Compra excluída com sucesso', 200);
+        }
+        return $this->error('Erro ao excluir compra', 500);
     }
 
     public function comprar(CompraRequest $request,  Produto $produto)
@@ -80,7 +73,7 @@ class CompraController extends Controller
             $request->validated();
 
             $compra = Compra::create([
-                'cliente_id' => $request->cliente_id,
+                'user_id' => $request->user_id,
                 'valor_total' => $produto->preco,
                 'status' => 'pendente'
             ]);
