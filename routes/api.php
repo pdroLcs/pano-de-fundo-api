@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function() {
         Route::resource('categorias', CategoriaController::class)->except('create', 'edit');
         Route::resource('produtos', ProdutoController::class)->except('create', 'edit');
         Route::resource('fale-conosco', FaleConoscoController::class)->except('create', 'edit');
+        Route::delete('/compras/{compra}', [CompraController::class, 'destroy']);
     });
 
     Route::middleware(['auth:sanctum', 'ability:cliente'])->group(function() {
@@ -31,7 +32,7 @@ Route::prefix('v1')->group(function() {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/compras', [CompraController::class, 'index']);
+        Route::resource('compras', CompraController::class)->only('index', 'show');
     });
 
     Route::resource('produtos', ProdutoController::class)->only('index', 'show');
