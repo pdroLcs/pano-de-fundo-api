@@ -25,7 +25,15 @@ class UserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'telefone' => 'nullable|string|max:20',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6'
+            'password' => 'required|string|min:6|confirmed'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => 'Esse email já está sendo utilizado',
+            'password.confirmed' => 'As senhas não são iguais'
         ];
     }
 }
