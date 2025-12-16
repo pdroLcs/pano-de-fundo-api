@@ -18,49 +18,38 @@ class AuthController extends Controller
 
     public function register(UserRequest $request)
     {
-        try {
-            DB::beginTransaction();
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $user = User::create([
-                'name' => $data['name'],
-                'email'=> $data['email'],
-                'telefone' => $data['telefone'] ?? null,
-                'password' => bcrypt($data['password'])
-            ]);
+        $user = User::create([
+            'name' => $data['name'],
+            'email'=> $data['email'],
+            'telefone' => $data['telefone'] ?? null,
+            'password' => bcrypt($data['password'])
+        ]);
 
-            $token = $user->createToken('auth_token', ['cliente'])->plainTextToken;
+        $token = $user->createToken('auth_token', ['cliente'])->plainTextToken;
 
-            DB::commit();
-            return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return $this->error('Erro ao cadastrar cliente', 500, [$e->getMessage()]);
-        }
+        return $this->response('Cliente cadastrado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
     }
 
     public function login(Request $request)
     {
-        try {
-            $credentials = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required|string|min:6'
-            ]);
-    
-            if (!Auth::attempt($credentials)) {
-                return $this->error('Email ou senha incorretos', 401);
-            }
-    
-            $user = $request->user();
-            $user->tokens()->delete();
-    
-            $abilities = $user->role === 'admin' ? ['admin'] : ['cliente'];
-            $token = $user->createToken('auth_token', $abilities)->plainTextToken;
-    
-            return $this->response('Login realizado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
-        } catch (Exception $e) {
-            return $this->error('Erro desconhecido', 500, [$e->getMessage()]);
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6'
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            return $this->error('Email ou senha incorretos', 401, ['credentials' => ['Email ou senha incorretos']]);
         }
+
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        $abilities = $user->role === 'admin' ? ['admin'] : ['cliente'];
+        $token = $user->createToken('auth_token', $abilities)->plainTextToken;
+
+        return $this->response('Login realizado com sucesso', 201, ['user' => new UserResource($user), 'token' => $token]);
     }
 
     public function logout(Request $request)
